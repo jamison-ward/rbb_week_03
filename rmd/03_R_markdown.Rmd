@@ -2,23 +2,98 @@
 title: "03_R_markdown"
 author: "Jamison Ward"
 date: "2025-10-16"
-output: 
-  html_document: 
-    toc: true
+output: prettydoc::html_pretty
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
+# Set global options for all code chunks
+
+# Load packages ----
+if(!require(pacman)) install.packages("pacman")
+pacman::p_load(
+  tidyverse,
+  janitor,
+  inspectdf,
+  here # new package we will use soon
+)
+
+# Load data ----
+ebola_sierra_leone <- read_csv(here("data/ebola_sierra_leone.csv"))
+# IMPORTANT: Need to use here() function to load in the data correctly
+```
+
+# R Markdown
+
+Here is some free text
+
+```{r myChunk, message=FALSE}
+# Insert a code chunk with the hotkey combination: Ctrl + Alt + i
+# Specify a chunk name with characters, numbers, and hyphens after the "r" in {}
+# echo = FALSE -> hide the code chunk in the knitted document, only revealing the code output
+# eval = FALSE -> do not evaluate the code (no result will output)
+# include = FALSE -> hide the code chunk and do not evaluate in the knitted document
+# message = FALSE -> hide messages from code that outputs messages when run
+
+library(tidyverse)
+2 + 2
 ```
 
 ```{r}
-# Insert a code chunk with the hotkey combination: Ctrl + Alt + i
+max_height <- max(women$height)
+```
+
+The maximum women's height is `r max_height`
+  The "r" indicates that the following code is in the R language
+
+# Tables
+
+```{r}
+pacman::p_load(tidyverse, flextable, gt, reactable)
+# flextable: widest range of formats
+# gt: best for rich tables in HTML format
+# reactable: for large, scrollable tables in HTML format
+
+
+flextable::flextable(women)
+gt::gt(women)
+reactable::reactable(women)
+```
+
+# Plots
+
+```{r fig.height=7, fig.width=3}
+ggplot(women) + geom_point(aes(height, weight))
+```
+
+Quarto is a new version of R markdown that supports other programming languages
+
+# Ebola Analysis
+
+# Cases by district
+
+This table shows counts of cases by district:
+
+```{r echo = FALSE}
+district_tab <- tabyl(ebola_sierra_leone, district)
+flextable::flextable(district_tab)
+```
+
+# Visualize categorical variables
+
+```{r}
+categ_vars_plot<- show_plot(inspect_cat(ebola_sierra_leone))
+categ_vars_plot
+```
+
+# Visualize numeric variables
+
+```{r}
+num_vars_plot <- show_plot(inspect_num(ebola_sierra_leone))
+num_vars_plot
 ```
 
 
-
-
-# R Markdown
 
 ## Header level 2
 
@@ -29,7 +104,7 @@ These are bullets
 -   bullet 1
 -   bullet 2
 
-Visit our website [here](https://thegraphcourses.org)
+Visit The GRAPH Courses website [here](https://thegraphcourses.org)
 
 ![An image of HOV Alvin in 2018.](images/HOV_Alvin_2018.jpg){width="255"}
 
